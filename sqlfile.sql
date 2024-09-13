@@ -1,71 +1,64 @@
-select TOP(10) * from superstore
+--join query using inner join
+--select the table to view the attribute in the entities
+SELECT * FROM sales
 
-select * from  Superstore
+SELECT * FROM product
 
---fetching specified column
-SELECT ship_mode, customer_name
-FROM superstore
+SELECT customer, units_sold, product_name, price, s.product_id
+FROM sales AS s
+JOIN
+product AS p ON s.product_id = p.product_id
 
---using Aliase and calculate the unit price of each quantity
-SELECT top(10) product_name, customer_name as name_, (sales/quantity) as unit_price
-FROM Superstore
+--Calculate the amount earn in each transaction or order
+SELECT customer, units_sold, price, product_name, (units_sold*price) AS sellng_price
+FROM sales s
+JOIN
+product p ON s.product_id = p.product_id
 
---using WHERE CLAUSE
-SELECT ship_mode, customer_name as name_,product_name as Oja,city,sales,quantity 
-FROM Superstore 
-WHERE Quantity > 4;
+--calculating profit
+SELECT customer, units_sold, price, production_cost, (units_sold*price) AS sellng_price, 
+(units_sold * production_cost) AS production_price, ((units_sold * price)-(units_sold * production_cost)) AS profit  
+FROM sales s
+JOIN
+product p ON s.product_id = p.product_id
 
- SELECT ship_mode, customer_name,product_name ,city,sales, max(quantity) as maximum
-FROM Superstore 
-group by ship_mode,customer_name,product_name,city,sales
+SELECT product_name, SUM((units_sold * price)) AS total_sales_per_product, SUM((units_sold * production_cost)) AS production_cost,
+SUM(((units_sold*price)-(units_sold * Production_cost))) AS PROFIT
+FROM sales s
+JOIN product p ON s.product_id = p.product_id
+GROUP BY product_name
+ORDER BY PROFIT DESC
 
-SELECT ship_mode, customer_name as name_,product_name as Oja,city,sales,quantity 
-FROM Superstore 
-WHERE Quantity BETWEEN 2 AND 4;
-
-SELECT ship_mode, customer_name as name_,product_name as Oja,city,sales,quantity 
-FROM Superstore 
-WHERE Quantity >2 AND Quantity < 5;
-
---using WHERE CLAUSE AND LIKE OPERATOR
-SELECT ship_mode customer_name, product_name, city, sales, quantity
-FROM Superstore
-WHERE City LIKE 'A%' and Quantity < 4
-SELECT ship_mode customer_name, product_name, city, sales, quantity
-FROM Superstore
-WHERE City LIKE '%on' and Quantity < 4
-
---middle like
-SELECT ship_mode customer_name, product_name, city, sales, quantity
-FROM Superstore
-WHERE City LIKE '_m%'
-
---Uisng in operator to find the transaction of Ken Black, Joel Eaton, Ryan Crowe
-SELECT ship_mode, customer_name, product_name, city, sales, quantity
-FROM Superstore
-WHERE Customer_name IN ('Ken Black','Joel Eaton','Ryan Crowe')
-
---ORDER CLAUSE in DESC
-SELECT ship_mode, customer_name, product_name, city, sales, quantity
-FROM Superstore
-WHERE Customer_name IN ('Ken Black','Joel Eaton','Ryan Crowe')
-ORDER BY Quantity desc
-
---GROUP BY CLAUSE
-SELECT City, count(*) as customer_count FROM Superstore
-GROUP BY city
-
-SELECT City, count(*) as customer_count FROM Superstore
-GROUP BY city
-HAVING count(*) > 50;
-
-SELECT city, SUM(sales) AS Total_sales
-FROM Superstore
-GROUP BY City
-ORDER BY Total_sales DESC
+--Calculate the profit made from eaxh product
+SELECT product_name, SUM(((units_sold * price)-(units_sold * production_cost))) AS PROFIT
+FROM sales s
+JOIN
+product p ON s.product_id = p.product_id
+GROUP BY product_name
 
 
-SELECT city, SUM(sales) AS Total_sales, MAX(Quantity) as max_quantity, count(*) as 'number of transaction'
-FROM Superstore
-GROUP BY City
-ORDER BY Total_sales DESC
+--LEFT JOIN
+SELECT customer, p.product_id, product_name
+FROM product p
+JOIN 
+sales s ON p.product_id = s.product_id
+
+SELECT * FROM student_info
+
+SELECT * FROM department_info
+
+SELECT department_name, student_name, department_info.department_id
+FROM department_info
+LEFT JOIN student_info
+ON department_info.department_id = student_info.department_id
+
+SELECT department_name, student_name, department_info.department_id
+FROM department_info
+RIGHT JOIN student_info
+ON department_info.department_id = student_info.department_id
+
+
+SELECT department_name, student_name, department_info.department_id
+FROM department_info
+FULL OUTER JOIN student_info
+ON department_info.department_id = student_info.department_id
